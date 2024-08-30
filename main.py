@@ -8,6 +8,7 @@ pygame.init()
 
 # Load the collision sound
 collision_sound = pygame.mixer.Sound("beep.wav")
+collision_sound.set_volume(0.2)  # Set volume to 20% of the maximum volume
 
 # Screen dimensions
 WIDTH, HEIGHT = 965, 580
@@ -17,19 +18,22 @@ pygame.display.set_caption("PyBonk")
 # Font for displaying text
 font = pygame.font.Font(None, 30)
 
+
 # Ball class
 class Ball:
+
     def __init__(self):
         self.reset()
 
     def reset(self):
         self.radius = random.randint(10, 30)
-        self.mass = math.pi * self.radius ** 2  # Mass proportional to area (radius^2)
+        self.mass = math.pi * self.radius**2  # Mass proportional to area (radius^2)
         self.x = random.randint(self.radius, WIDTH - self.radius)
         self.y = random.randint(self.radius, HEIGHT - self.radius)
         self.dx = random.choice([-1, 1]) * random.uniform(1, 2)  # Adjust speed
         self.dy = random.choice([-1, 1]) * random.uniform(1, 2)
-        self.color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+        self.color = (random.randint(0, 255), random.randint(0, 255),
+                      random.randint(0, 255))
         self.grabbed = False
 
     def move(self):
@@ -44,7 +48,8 @@ class Ball:
                 self.dy = -self.dy
 
     def draw(self, screen):
-        pygame.draw.circle(screen, self.color, (int(self.x), int(self.y)), self.radius)
+        pygame.draw.circle(screen, self.color, (int(self.x), int(self.y)),
+                           self.radius)
 
     def check_collision(self, other):
         distance = math.hypot(self.x - other.x, self.y - other.y)
@@ -92,8 +97,10 @@ class Ball:
         distance = math.hypot(self.x - mouse_pos[0], self.y - mouse_pos[1])
         return distance < self.radius
 
+
 # Create a list of balls
-balls = [Ball() for _ in range(55)]
+balls = [Ball() for _ in range(1)]
+
 
 # Function to reset all balls and the collision counter
 def reset_game():
@@ -101,6 +108,7 @@ def reset_game():
     for ball in balls:
         ball.reset()
     collision_count = 0
+
 
 # Initialize collision count
 collision_count = 0
@@ -148,13 +156,14 @@ while running:
     for i, ball in enumerate(balls):
         ball.move()
         ball.draw(screen)
-        for other_ball in balls[i+1:]:
+        for other_ball in balls[i + 1:]:
             if ball.check_collision(other_ball):
                 ball.resolve_collision(other_ball)
                 collision_count += 1
 
     # Display the collision counter
-    counter_text = font.render(f"Collisions: {collision_count}", True, (0, 0, 0))
+    counter_text = font.render(f"Collisions: {collision_count}", True,
+                               (0, 0, 0))
     screen.blit(counter_text, (WIDTH - counter_text.get_width() - 10, 10))
 
     pygame.display.flip()
